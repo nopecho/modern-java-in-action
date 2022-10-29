@@ -5,6 +5,8 @@ import fixture.DefaultAppleFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Chapter2Test {
@@ -45,5 +47,17 @@ class Chapter2Test {
         String actual = container.prettyPrintApple(sut);
 
         assertThat(actual).isEqualTo(DEFAULT_FORMAT3);
+    }
+
+    @Test
+    @DisplayName("Predicate")
+    void predicate() {
+        AppleContainer container = AppleContainer.of(TEST_DATA, TEST_DATA2);
+
+        List<Apple> actual = container.filter((apple -> apple.getWeight() > 50));
+        List<Apple> actual2 = container.filter((apple -> apple.getWeight() < 50));
+
+        assertThat(actual.size()).isEqualTo(2);
+        assertThat(actual2).isEmpty();
     }
 }

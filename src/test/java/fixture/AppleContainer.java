@@ -1,6 +1,8 @@
 package fixture;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class AppleContainer {
@@ -19,5 +21,15 @@ public class AppleContainer {
         return container.stream()
                 .map(formatter::accept)
                 .collect(Collectors.joining());
+    }
+
+    public List<Apple> filter(Predicate<Apple> predicate) {
+        List<Apple> result = new ArrayList<>();
+        for (Apple apple : container) {
+            if (predicate.test(apple)) {
+                result.add(apple);
+            }
+        }
+        return result;
     }
 }
