@@ -5,6 +5,7 @@ import fixture.DefaultAppleFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,5 +60,58 @@ class Chapter2Test {
 
         assertThat(actual.size()).isEqualTo(2);
         assertThat(actual2).isEmpty();
+    }
+
+    private static class CommandRegister {
+        private final List<Command> container = new ArrayList<>();
+
+        public void registration (Command ...commands) {
+            this.container.addAll(List.of(commands));
+        }
+
+        public List<Command> get() {
+            return this.container;
+        }
+    }
+
+    @Test
+    void register() {
+        CommandRegister register = new CommandRegister();
+        register.registration((c) ->  c.getDeclaredMethods()[0].invoke(c));
+
+        assertThat(register.get()).isNotEmpty();
+    }
+
+    @Test
+    void test() {
+        CommandRegister register = new CommandRegister();
+        register.registration(
+                (t) ->  t.getDeclaredMethods()[0].invoke(new Foo()),
+                (t) -> t.getDeclaredMethods()[0].invoke(new Bar())
+        );
+
+        register.get().forEach(command -> {
+            try {
+                command.doCommand(Foo.class);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+    }
+
+    private static class Foo {
+        public void print() {
+            System.out.println("foo");
+        }
+    }
+
+    private static class Bar {
+
+        private List<String> list = new ArrayList<>();
+
+        public void add(String s) {
+            list.add(s);
+        }
     }
 }
